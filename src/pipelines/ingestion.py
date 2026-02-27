@@ -8,8 +8,8 @@ from zenml.logger import get_logger
 
 from ..chunking import Chunker
 from ..embeddings import Embedder
-from ..models.document import Document, DocumentChunk
 from ..parsers import DoclingParser
+from ..schemas.document import Document, DocumentChunk
 from ..storage import WeaviateClient
 
 logger = get_logger(__name__)

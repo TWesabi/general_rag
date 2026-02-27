@@ -8,7 +8,7 @@ from weaviate.classes.config import Configure, DataType, Property
 from weaviate.classes.init import Auth
 
 from ..config import settings
-from ..models.document import Document, DocumentChunk
+from ..schemas.document import Document, DocumentChunk
 
 
 class WeaviateClient:

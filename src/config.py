@@ -160,6 +160,7 @@ class Settings(BaseSettings):
     chunking: ChunkingConfig = Field(default_factory=ChunkingConfig)
     retrieval: RetrievalConfig = Field(default_factory=RetrievalConfig)
     api: APIConfig = Field(default_factory=APIConfig)
+    LOGGER_LEVEL: str = "INFO"
 
 
 # Global settings instance

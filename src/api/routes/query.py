@@ -5,8 +5,8 @@ from fastapi.responses import StreamingResponse
 
 from src.api.dependencies import get_generator, get_retriever
 from src.generation import Generator
-from src.models.query import QueryRequest, QueryResponse
 from src.retrieval import Retriever
+from src.schemas.query import QueryRequest, QueryResponse
 
 router = APIRouter(prefix="/query", tags=["query"])
 

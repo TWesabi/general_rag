@@ -11,8 +11,8 @@ from fastapi.responses import JSONResponse
 
 from src.chunking import Chunker
 from src.embeddings import Embedder
-from src.models.document import Document, DocumentChunk
 from src.parsers import DoclingParser
+from src.schemas.document import Document, DocumentChunk
 from src.storage import WeaviateClient
 
 from ..dependencies import get_chunker, get_embedder, get_parser, get_storage

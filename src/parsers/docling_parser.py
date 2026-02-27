@@ -11,7 +11,7 @@ from docling.datamodel.pipeline_options import (
 )
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
-from ..models.document import Document, DocumentMetadata
+from ..schemas.document import Document, DocumentMetadata
 
 
 class DoclingParser:

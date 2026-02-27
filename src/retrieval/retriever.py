@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from ..config import settings
 from ..embeddings import Embedder
-from ..models.query import RetrievedChunk
+from ..schemas.query import RetrievedChunk
 from ..storage import WeaviateClient
 
 

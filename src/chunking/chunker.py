@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List
 
 from src.config import settings
-from src.models import Document, DocumentChunk
+from src.schemas import Document, DocumentChunk
 
 
 class ChunkingStrategy(str, Enum):
