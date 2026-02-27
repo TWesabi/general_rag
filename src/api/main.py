@@ -2,8 +2,6 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-
 
 from src.api.routes import documents, health, query
 
@@ -36,4 +34,3 @@ async def root():
         "version": "0.1.0",
         "docs": "/docs",
     }
-

@@ -1,7 +1,6 @@
 """Basic usage example for the RAG system."""
 
 import asyncio
-from pathlib import Path
 
 from rag_system.chunking import Chunker
 from rag_system.embeddings import Embedder
@@ -18,10 +17,10 @@ async def main():
 
     # Initialize components
     print("\n1. Initializing components...")
-    parser = DoclingParser()
-    chunker = Chunker()
-    embedder = Embedder()
-    storage = WeaviateClient()
+    _parser = DoclingParser()
+    _chunker = Chunker()
+    _embedder = Embedder()
+    _storage = WeaviateClient()
     retriever = Retriever()
     generator = Generator()
 

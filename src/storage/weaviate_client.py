@@ -4,7 +4,7 @@ import uuid
 from typing import Any, Dict, List, Optional
 
 import weaviate
-from weaviate.classes.config import Configure, Property, DataType
+from weaviate.classes.config import Configure, DataType, Property
 from weaviate.classes.init import Auth
 
 from ..config import settings
@@ -21,7 +21,7 @@ class WeaviateClient:
         """Initialize Weaviate client using v v4 API."""
         # Parse URL to get host and port
         from urllib.parse import urlparse
-        
+
         parsed_url = urlparse(settings.weaviate.url)
         host = parsed_url.hostname or "localhost"
         port = parsed_url.port or 8080
@@ -93,11 +93,19 @@ class WeaviateClient:
                 description="Document metadata",
                 replication_config=replication,
                 properties=[
-                    Property(name="content", data_type=DataType.TEXT, description="Full document content"),
-                    Property(name="source", data_type=DataType.TEXT, description="Source file path"),
+                    Property(
+                        name="content", data_type=DataType.TEXT, description="Full document content"
+                    ),
+                    Property(
+                        name="source", data_type=DataType.TEXT, description="Source file path"
+                    ),
                     Property(name="file_type", data_type=DataType.TEXT, description="File type"),
-                    Property(name="file_size", data_type=DataType.INT, description="File size in bytes"),
-                    Property(name="created_at", data_type=DataType.DATE, description="Creation timestamp"),
+                    Property(
+                        name="file_size", data_type=DataType.INT, description="File size in bytes"
+                    ),
+                    Property(
+                        name="created_at", data_type=DataType.DATE, description="Creation timestamp"
+                    ),
                 ],
             )
         except Exception:
@@ -116,13 +124,33 @@ class WeaviateClient:
                     vector_index_config=Configure.VectorIndex.hnsw()  # Use HNSW index
                 ),  # We provide vectors ourselves
                 properties=[
-                    Property(name="content", data_type=DataType.TEXT, description="Chunk text content"),
-                    Property(name="chunk_index", data_type=DataType.INT, description="Index of chunk in document"),
-                    Property(name="document_id", data_type=DataType.TEXT, description="ID of parent document"),
-                    Property(name="source", data_type=DataType.TEXT, description="Source file path"),
+                    Property(
+                        name="content", data_type=DataType.TEXT, description="Chunk text content"
+                    ),
+                    Property(
+                        name="chunk_index",
+                        data_type=DataType.INT,
+                        description="Index of chunk in document",
+                    ),
+                    Property(
+                        name="document_id",
+                        data_type=DataType.TEXT,
+                        description="ID of parent document",
+                    ),
+                    Property(
+                        name="source", data_type=DataType.TEXT, description="Source file path"
+                    ),
                     Property(name="file_type", data_type=DataType.TEXT, description="File type"),
-                    Property(name="start_char", data_type=DataType.INT, description="Start character position"),
-                    Property(name="end_char", data_type=DataType.INT, description="End character position"),
+                    Property(
+                        name="start_char",
+                        data_type=DataType.INT,
+                        description="Start character position",
+                    ),
+                    Property(
+                        name="end_char",
+                        data_type=DataType.INT,
+                        description="End character position",
+                    ),
                 ],
             )
         except Exception:
@@ -146,6 +174,7 @@ class WeaviateClient:
         created_at = document.metadata.created_at
         if created_at.tzinfo is None:
             from datetime import timezone
+
             created_at = created_at.replace(tzinfo=timezone.utc)
         rfc3339_date = created_at.isoformat()
 

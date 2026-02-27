@@ -56,11 +56,11 @@ class Chunker:
         """Recursive chunking strategy."""
         chunks = []
         text = document.content
-        
+
         # Safety check
         if not text or len(text) == 0:
             return chunks
-        
+
         start = 0
         chunk_index = 0
         max_iterations = (len(text) // max(1, self.chunk_size - self.chunk_overlap)) + 100
@@ -74,7 +74,7 @@ class Chunker:
                     f"start={start}, text_len={len(text)}, "
                     f"chunk_size={self.chunk_size}, overlap={self.chunk_overlap}"
                 )
-            
+
             # Calculate end position
             end = min(start + self.chunk_size, len(text))
 
@@ -97,11 +97,11 @@ class Chunker:
 
             # Move start position with overlap
             new_start = end - self.chunk_overlap
-            
+
             # Prevent infinite loop - ensure we always make progress
             if new_start <= start:
                 new_start = start + 1
-            
+
             start = new_start
             chunk_index += 1
 

@@ -8,15 +8,20 @@ print("=" * 50)
 # Check Python version
 print("\n1. Checking Python version...")
 if sys.version_info < (3, 10):
-    print(f"   ❌ Python {sys.version_info.major}.{sys.version_info.minor} detected. Python 3.10+ required.")
+    print(
+        f"   ❌ Python {sys.version_info.major}.{sys.version_info.minor} detected. Python 3.10+ required."
+    )
     sys.exit(1)
 else:
-    print(f"   ✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+    print(
+        f"   ✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    )
 
 # Check imports
 print("\n2. Checking imports...")
 try:
-    import fastapi
+    import fastapi  # noqa: F401
+
     print("   ✅ FastAPI")
 except ImportError:
     print("   ❌ FastAPI not installed")
@@ -24,34 +29,39 @@ except ImportError:
 
 try:
     import weaviate
+
     print("   ✅ Weaviate client")
 except ImportError:
     print("   ❌ Weaviate client not installed")
     sys.exit(1)
 
 try:
-    import docling
+    import docling  # noqa: F401
+
     print("   ✅ Docling")
 except ImportError:
     print("   ❌ Docling not installed")
     sys.exit(1)
 
 try:
-    import sentence_transformers
+    import sentence_transformers  # noqa: F401
+
     print("   ✅ Sentence Transformers")
 except ImportError:
     print("   ❌ Sentence Transformers not installed")
     sys.exit(1)
 
 try:
-    import zenml
+    import zenml  # noqa: F401
+
     print("   ✅ ZenML")
 except ImportError:
     print("   ❌ ZenML not installed")
     sys.exit(1)
 
 try:
-    import mlflow
+    import mlflow  # noqa: F401
+
     print("   ✅ MLflow")
 except ImportError:
     print("   ❌ MLflow not installed")
@@ -61,6 +71,7 @@ except ImportError:
 print("\n3. Checking Weaviate connection...")
 try:
     import weaviate
+
     client = weaviate.connect_to_local()
     if client.is_ready():
         print("   ✅ Weaviate is accessible")
@@ -77,7 +88,8 @@ except Exception as e:
 print("\n4. Checking configuration...")
 try:
     from rag_system.config import settings
-    print(f"   ✅ Configuration loaded")
+
+    print("   ✅ Configuration loaded")
     print(f"      Weaviate URL: {settings.weaviate.url}")
     print(f"      LLM Provider: {settings.llm.provider}")
     print(f"      Embedding Model: {settings.embedding.model_name}")

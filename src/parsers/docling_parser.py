@@ -1,14 +1,15 @@
 """Docling-based document parser."""
 
-
 import os
 from pathlib import Path
-from typing import Optional
 
+from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
 from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions
-from docling.document_converter import DocumentConverter
-from docling.document_converter import PdfFormatOption
+from docling.datamodel.pipeline_options import (
+    PdfPipelineOptions,
+    ThreadedPdfPipelineOptions,
+)
+from docling.document_converter import DocumentConverter, PdfFormatOption
 
 from ..models.document import Document, DocumentMetadata
 
@@ -18,8 +19,28 @@ class DoclingParser:
 
     def __init__(self):
         """Initialize the Docling parser."""
-        # Create pipeline options with OCR disabled and table structure enabled
-        pipeline_options = PdfPipelineOptions()
+        # Check if CUDA is available for GPU acceleration
+        try:
+            import torch
+
+            use_gpu = torch.cuda.is_available()
+        except Exception:
+            use_gpu = False
+
+        # Configure accelerator options
+        accelerator_options = None
+        if use_gpu:
+            accelerator_options = AcceleratorOptions(device=AcceleratorDevice.CUDA)
+            # Use GPU-optimized batch sizes
+            pipeline_options = ThreadedPdfPipelineOptions(
+                ocr_batch_size=64,
+                layout_batch_size=64,
+                table_batch_size=4,
+            )
+        else:
+            # CPU fallback
+            pipeline_options = PdfPipelineOptions()
+
         pipeline_options.do_ocr = False  # Disable OCR for faster processing
         pipeline_options.do_table_structure = True  # Extract table structure
 
@@ -27,9 +48,10 @@ class DoclingParser:
         pdf_options = PdfFormatOption(pipeline_options=pipeline_options)
 
         self.converter = DocumentConverter(
+            accelerator_options=accelerator_options,
             format_options={
                 InputFormat.PDF: pdf_options,
-            }
+            },
         )
 
     def parse(self, file_path: str | Path) -> Document:
@@ -57,7 +79,7 @@ class DoclingParser:
 
         # Convert document
         result = self.converter.convert(str(file_path))
-        
+
         # Get the document from the conversion result
         doc = result.document
 

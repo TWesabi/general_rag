@@ -1,6 +1,7 @@
 """Configuration management using pydantic-settings."""
 
 from typing import Literal, Optional
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

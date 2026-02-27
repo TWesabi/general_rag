@@ -11,6 +11,7 @@ _disable_ssl = any(
 
 if _disable_ssl:
     import ssl
+
     import urllib3
 
     # Suppress SSL warnings
@@ -19,7 +20,9 @@ if _disable_ssl:
     # Patch ssl module BEFORE any other imports
     _original_create_default_context = ssl.create_default_context
 
-    def _no_verify_context(purpose=ssl.Purpose.SERVER_AUTH, *, cafile=None, capath=None, cadata=None):
+    def _no_verify_context(
+        purpose=ssl.Purpose.SERVER_AUTH, *, cafile=None, capath=None, cadata=None
+    ):
         ctx = _original_create_default_context(purpose, cafile=cafile, capath=capath, cadata=cadata)
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
@@ -29,6 +32,7 @@ if _disable_ssl:
 
     # Also patch requests.Session to default verify=False
     import requests
+
     _original_session_init = requests.Session.__init__
 
     def _patched_session_init(self, *args, **kwargs):
@@ -50,8 +54,8 @@ if _disable_ssl:
     except Exception:
         pass
 
-import sys
-from pathlib import Path
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 # Add src to path so imports work
 _PROJECT_ROOT = Path(__file__).resolve().parent
@@ -59,9 +63,9 @@ _SRC = _PROJECT_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import uvicorn
+import uvicorn  # noqa: E402
 
-from src.config import settings
+from src.config import settings  # noqa: E402
 
 if __name__ == "__main__":
     uvicorn.run(

@@ -99,7 +99,9 @@ class Generator:
             async for chunk in self._generate_ollama_stream(full_prompt, max_tokens, temperature):
                 yield chunk
         elif self.provider == LLMProvider.AZURE_OPENAI:
-            async for chunk in self._generate_azure_openai_stream(full_prompt, max_tokens, temperature):
+            async for chunk in self._generate_azure_openai_stream(
+                full_prompt, max_tokens, temperature
+            ):
                 yield chunk
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")

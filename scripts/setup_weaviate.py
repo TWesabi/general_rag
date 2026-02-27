@@ -5,13 +5,12 @@ import sys
 import time
 from urllib.parse import urlparse
 
-import weaviate
-
 
 def get_weaviate_port():
     """Get Weaviate HTTP port from WEAVIATE_URL (e.g. .env). Default 8080."""
     try:
         from rag_system.config import settings
+
         parsed = urlparse(settings.weaviate.url)
         return parsed.port if parsed.port is not None else 8080
     except Exception:
@@ -24,12 +23,7 @@ def check_docker():
         # Check if docker command exists
         subprocess.run(["docker", "--version"], check=True, capture_output=True)
         # Check if Docker daemon is running
-        result = subprocess.run(
-            ["docker", "info"],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
+        result = subprocess.run(["docker", "info"], capture_output=True, text=True, timeout=5)
         return result.returncode == 0
     except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
         return False
@@ -106,6 +100,7 @@ def check_weaviate_connection():
     print("Checking Weaviate connection...")
     try:
         from rag_system.config import settings
+
         url = settings.weaviate.url
     except Exception:
         url = "http://localhost:8080"
@@ -117,6 +112,7 @@ def check_weaviate_connection():
     for i in range(max_retries):
         try:
             import urllib.request
+
             req = urllib.request.Request(ready_url, method="GET")
             with urllib.request.urlopen(req, timeout=5) as resp:
                 if resp.status == 200:
@@ -155,6 +151,7 @@ def main():
         if check_weaviate_connection():
             try:
                 from rag_system.config import settings
+
                 url = settings.weaviate.url
             except Exception:
                 url = "http://localhost:8080"
@@ -162,7 +159,9 @@ def main():
             sys.exit(0)
         print("\nContainer is running but Weaviate did not become ready.")
         print("Check: docker logs weaviate")
-        print("To recreate with single-node settings: docker rm -f weaviate then run this script again.")
+        print(
+            "To recreate with single-node settings: docker rm -f weaviate then run this script again."
+        )
         sys.exit(1)
 
     # Stopped: start existing container
@@ -172,6 +171,7 @@ def main():
         if check_weaviate_connection():
             try:
                 from rag_system.config import settings
+
                 url = settings.weaviate.url
             except Exception:
                 url = "http://localhost:8080"
@@ -187,6 +187,7 @@ def main():
     if check_weaviate_connection():
         try:
             from rag_system.config import settings
+
             url = settings.weaviate.url
         except Exception:
             url = "http://localhost:8080"

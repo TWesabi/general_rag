@@ -32,7 +32,9 @@ class Retriever:
         self.top_k = top_k or settings.retrieval.top_k
         self.score_threshold = score_threshold or settings.retrieval.score_threshold
 
-    def retrieve(self, query: str, top_k: Optional[int] = None, filters: Optional[dict] = None) -> List[RetrievedChunk]:
+    def retrieve(
+        self, query: str, top_k: Optional[int] = None, filters: Optional[dict] = None
+    ) -> List[RetrievedChunk]:
         """
         Retrieve relevant chunks for a query.
 

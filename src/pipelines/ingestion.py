@@ -69,7 +69,9 @@ def generate_embeddings_step(chunks: List[DocumentChunk]) -> List[List[float]]:
 
 
 @step
-def store_document_step(document: Document, chunks: List[DocumentChunk], embeddings: List[List[float]]) -> str:
+def store_document_step(
+    document: Document, chunks: List[DocumentChunk], embeddings: List[List[float]]
+) -> str:
     """
     Store document and chunks in Weaviate.
 

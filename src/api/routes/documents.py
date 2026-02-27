@@ -1,10 +1,11 @@
 """Document management endpoints."""
 
 import logging
-from pathlib import Path
 import time
 import uuid
+from pathlib import Path
 from typing import List
+
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
@@ -13,6 +14,7 @@ from src.embeddings import Embedder
 from src.models.document import Document, DocumentChunk
 from src.parsers import DoclingParser
 from src.storage import WeaviateClient
+
 from ..dependencies import get_chunker, get_embedder, get_parser, get_storage
 
 logger = logging.getLogger(__name__)
@@ -93,7 +95,7 @@ async def upload_document(
 
         # Store chunks with embeddings
         logger.info(f"Storing {len(chunks)} chunks with embeddings...")
-        chunk_ids = storage.store_chunks(chunks, doc_id, embeddings)
+        storage.store_chunks(chunks, doc_id, embeddings)
         store_time = time.time() - store_start
         logger.info(f"Storage completed in {store_time:.2f}s")
 

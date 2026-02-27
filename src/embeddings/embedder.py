@@ -38,10 +38,14 @@ class Embedder:
     def _init_sentence_transformers(self):
         """Initialize sentence-transformers (with optional SSL workaround)."""
         # SSL workaround for Hugging Face
-        if os.environ.get("EMBEDDING_DISABLE_SSL_VERIFY", "").strip().lower() in ("true", "1", "on"):
+        if os.environ.get("EMBEDDING_DISABLE_SSL_VERIFY", "").strip().lower() in (
+            "true",
+            "1",
+            "on",
+        ):
             try:
-                from huggingface_hub import configure_http_backend
                 import requests
+                from huggingface_hub import configure_http_backend
 
                 def _hf_backend_factory():
                     s = requests.Session()

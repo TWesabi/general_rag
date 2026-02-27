@@ -1,7 +1,6 @@
 """Tests for document parsers."""
 
 import pytest
-from pathlib import Path
 
 from rag_system.parsers import DoclingParser
 

@@ -1,6 +1,5 @@
 """Tests for FastAPI endpoints."""
 
-import pytest
 from fastapi.testclient import TestClient
 
 from rag_system.api.main import app

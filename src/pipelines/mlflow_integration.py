@@ -39,9 +39,11 @@ class MLflowTracker:
         metrics = {
             "retrieval_latency": latency,
             "retrieved_chunks_count": len(retrieved_chunks),
-            "avg_chunk_score": sum(c.score for c in retrieved_chunks) / len(retrieved_chunks)
-            if retrieved_chunks
-            else 0.0,
+            "avg_chunk_score": (
+                sum(c.score for c in retrieved_chunks) / len(retrieved_chunks)
+                if retrieved_chunks
+                else 0.0
+            ),
         }
         self.log_metrics(metrics)
 
@@ -55,8 +57,8 @@ class MLflowTracker:
             version: Prompt version
         """
         # Store prompt as artifact
-        import tempfile
         import os
+        import tempfile
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             f.write(prompt_template)
@@ -94,8 +96,8 @@ class MLflowTracker:
             model_version = model_versions[0]
 
         # Download and read prompt file
-        import tempfile
         import os
+        import tempfile
 
         download_path = self.client.download_artifacts(
             model_version.run_id, "prompts", dst_path=tempfile.mkdtemp()
