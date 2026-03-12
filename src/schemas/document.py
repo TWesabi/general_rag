@@ -1,49 +1,57 @@
 """Document data models."""
 
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+import enum
+from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
-def _get_utc_now() -> datetime:
-    """Get current UTC datetime."""
-    return datetime.now(timezone.utc)
+class DocumentStatus(str, enum.Enum):
+    PARSED = "parsed"
+    CLEANED = "cleaned"
+    CHUNKED = "chunked"
+    EMBEDDED = "embedded"
+    FAILED = "failed"
+    SUCCESS = "Success"
+
+
+class ChunkSchema(BaseModel):
+    """A chunk of a document."""
+
+    content: str = Field(description="Chunk text content")
+    position: int = Field(description="Index of chunk in document")
+    hints: str = Field(
+        default=None, description="Info that suppliments the chunck in generation phase"
+    )
+    has_table: bool = Field(default=False, description="if the chunk has table content")
+    has_image: bool = Field(default=False, description="if the chunck is acullay an image content")
 
 
 class DocumentMetadata(BaseModel):
     """Metadata for a document."""
 
-    source: str = Field(description="Source file path or identifier")
-    file_type: str = Field(description="File type (e.g., pdf, docx)")
-    file_size: Optional[int] = Field(default=None, description="File size in bytes")
-    created_at: datetime = Field(default_factory=_get_utc_now, description="Creation timestamp")
-    updated_at: datetime = Field(default_factory=_get_utc_now, description="Last update timestamp")
-    custom_metadata: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Custom metadata fields",
+    local_path: Optional[str] = Field(description="Source file path")
+    status: Optional[DocumentStatus] = Field(description="Status of the document in the pipeline")
+    timestamp: Optional[datetime] = Field(description="Time of parsing")
+    num_pages: Optional[int] = Field(description="Numger of pages in the docuemtn")
+    table_count: Optional[int] = Field(description="How many table in the doc")
+    has_tables: Optional[bool] = Field(default=False, description="Does it have tables")
+    filename: Optional[str] = Field(description="the origina file name of the pdf ")
+    mimetype: Optional[str] = Field(
+        description="The media type of the docuemtn parsed",
     )
 
 
-class DocumentChunk(BaseModel):
-    """A chunk of a document."""
-
-    id: Optional[str] = Field(default=None, description="Chunk ID")
-    content: str = Field(description="Chunk text content")
-    chunk_index: int = Field(description="Index of chunk in document")
-    start_char: Optional[int] = Field(default=None, description="Start character position")
-    end_char: Optional[int] = Field(default=None, description="End character position")
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="Chunk metadata")
-
-
-class Document(BaseModel):
+class DocumentSchema(BaseModel):
     """A parsed document."""
 
-    id: Optional[str] = Field(default=None, description="Document ID")
-    content: str = Field(description="Full document text content")
-    metadata: DocumentMetadata = Field(description="Document metadata")
-    chunks: list[DocumentChunk] = Field(default_factory=list, description="Document chunks")
-    raw_data: Optional[Dict[str, Any]] = Field(
+    doc_name: str = Field(description="Name of parsed docuemtn")
+    raw_text: str = Field(description="Full document text content")
+    metadata: Optional[DocumentMetadata] = Field(description="Document metadata")
+    binary_hash: str = Field(description="a unique hash of the parsed document")
+    chunks: Optional[list[ChunkSchema]] = Field(description="Document chunks")
+    clean_text: Optional[str] = Field(
         default=None,
-        description="Raw parsed data from parser",
+        description="Cleaned parsed text from cleaner",
     )

@@ -3,42 +3,47 @@ from pathlib import Path
 import pytest
 
 from src.parsers.parser_pdf import PdfParser
-
-parser = PdfParser()
-
-PARSED_RESULT = parser(Path("tests/data/Test_Sample.pdf"))
+from src.schemas.document import DocumentMetadata, DocumentSchema
 
 
-def test_parse_document_file_not_found():
+@pytest.fixture(scope="session")
+def parser():
+    return PdfParser()
+
+
+@pytest.fixture(scope="session")
+def parsed_result(parser):
+    return parser(Path("tests/data/Test_Sample.pdf"))
+
+
+def test_parse_document_file_not_found(parser):
     fake_path = Path("does/not/exist.pdf")
     with pytest.raises(FileNotFoundError):
         parser(file_path=fake_path)
 
 
 @pytest.mark.integration
-def test_parse_document_returns_expected_keys():
-    assert set(PARSED_RESULT.keys()) == {
-        "local_path",
-        "status",
-        "timestamp",
+def test_parse_document_returns_expected_keys(parsed_result):
+    assert isinstance(parsed_result, DocumentSchema)
+    assert isinstance(parsed_result.metadata, DocumentMetadata)
+
+    assert set(parsed_result.model_dump().keys()) == {
         "doc_name",
-        "num_pages",
-        "text_content",
-        "table_count",
-        "has_tables",
-        "mimetype",
+        "raw_text",
+        "metadata",
         "binary_hash",
-        "filename",
+        "chunks",
+        "clean_text",
     }
 
 
 @pytest.mark.integration
-def test_parse_document_text_content_is_nonempty_string():
-    assert len(PARSED_RESULT["text_content"]) > 0
-    assert isinstance(PARSED_RESULT["text_content"], str)
+def test_parse_document_text_content_is_nonempty_string(parsed_result):
+    assert len(parsed_result.raw_text) > 0
+    assert isinstance(parsed_result.raw_text, str)
 
 
 @pytest.mark.integration
-def test_parse_document_num_pages_is_positive():
-    assert isinstance(PARSED_RESULT["num_pages"], int)
-    assert PARSED_RESULT["num_pages"] > 0
+def test_parse_document_num_pages_is_positive(parsed_result):
+    assert isinstance(parsed_result.metadata.num_pages, int)
+    assert parsed_result.metadata.num_pages > 0

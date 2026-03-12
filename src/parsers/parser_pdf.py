@@ -3,6 +3,7 @@ from pathlib import Path
 
 from docling.document_converter import DocumentConverter
 
+from src.schemas.document import DocumentMetadata, DocumentSchema
 from src.utils.logger import setup_logger
 
 log = setup_logger(__name__)
@@ -10,11 +11,11 @@ log = setup_logger(__name__)
 
 class DocumentParser(ABC):
     @abstractmethod
-    def __call__(self, file_path: Path): ...
+    def __call__(self, file_path): ...
 
 
 class PdfParser(DocumentParser):
-    def __call__(self, file_path):
+    def __call__(self, file_path: Path) -> DocumentSchema:
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
@@ -31,18 +32,23 @@ class PdfParser(DocumentParser):
         log.info("Docling docuemnt name: %s:", doc_name)
         log.info("Docling docuemnt num pages %s:", num_pages)
 
-        parsed_doc = {
-            "local_path": str(file_path),
-            "status": result.status,
-            "timestamp": result.timestamp,
-            "doc_name": doc_name,
-            "num_pages": num_pages,
-            "text_content": doc_data.export_to_text(),
-            "table_count": len(doc_data.tables),
-            "has_tables": len(doc_data.tables) > 0,
-            "mimetype": doc_data.origin.mimetype,
-            "binary_hash": doc_data.origin.binary_hash,
-            "filename": doc_data.origin.filename,
-        }
+        doc_metadata = DocumentMetadata(
+            local_path=str(file_path),
+            status=result.status.title(),
+            timestamp=result.timestamp,
+            num_pages=num_pages,
+            table_count=len(doc_data.tables),
+            has_tables=len(doc_data.tables) > 0,
+            filename=doc_data.origin.filename,
+            mimetype=doc_data.origin.mimetype,
+        )
+        parsed_doc = DocumentSchema(
+            doc_name=doc_name,
+            raw_text=doc_data.export_to_text(),
+            metadata=doc_metadata,
+            binary_hash=str(doc_data.origin.binary_hash),
+            chunks=None,
+            clean_text=None,
+        )
 
         return parsed_doc

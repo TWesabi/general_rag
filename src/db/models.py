@@ -1,18 +1,10 @@
-import enum
 from datetime import datetime
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.db.database import Base
-
-
-class DocumentStatus(str, enum.Enum):
-    PARSED = "parsed"
-    CLEANED = "cleaned"
-    CHUNKED = "chunked"
-    EMBEDDED = "embedded"
-    FAILED = "failed"
+from src.schemas.document import DocumentStatus
 
 
 class Document(Base):
