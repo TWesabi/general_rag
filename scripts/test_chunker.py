@@ -1,10 +1,12 @@
-from chunking.fixed_size_chunker import FixedSizeChunker
+from src.chunking.fixed_size_chunker import FixedSizeChunker
+from src.chunking.recursive_chunker import RecursiveChunker
 from src.parsers.basic_cleaning import BasicTextCleaner
+from src.utils.logger import setup_logger
+
+log = setup_logger(__name__)
 
 
 def main():
-
-    output_path = "./docs/chunks_file.txt"
 
     text = """
     Retrieval-Augmented Generation: From Simple to Advanced Systems
@@ -50,22 +52,70 @@ The generative model in simple RAG systems is typically a large language model t
     clean_text = cleaner(text)
     chunk_size = 500
     overlap_size = 100
-    # split = 0
-    # chunks = []
-    # print(f"Clean text is: {len(clean_text)} charachters and needs {len(clean_text)/500} loops")
-    # for i in range(0, int(len(clean_text)/500)):
-    #     print(f"I is: {split}")
-    #     chunk = clean_text[split : (split + chunk_size)]
-    #     chunks.append(chunk)
-    #     split = split + (chunk_size - overlap_size)
-    #     print(f"New I is: {split}")
 
     chunker = FixedSizeChunker(chunk_size=chunk_size, chunk_overlap=overlap_size)
     chunks = chunker(clean_text)
 
-    with open(output_path, "w") as f:
-        for idx, chunk in enumerate(chunks):
-            f.write(f"\n ###Chunk### {idx} \n \n {chunk}")
+    total = 0
+    for chunk in chunks:
+        total = total + len(chunk)
+    average = total / len(chunks)
+    log.info("Average chunk size is %s", average)
+    log.info(
+        "First 200 chars of first chunk is %s, its total length is %s",
+        chunks[0][:200],
+        len(chunks[0]),
+    )
+    log.info(
+        "First 200 chars of last chunk is %s, its total length is %s",
+        chunks[-1][:200],
+        len(chunks[-1]),
+    )
+    log.info(
+        "Fifth chunk is %s, its total length is %s",
+        chunks[4],
+        len(chunks[4]),
+    )
+
+    lengths = sorted([len(chunk) for chunk in chunks])
+
+    log.info("shortest recursive chunks has a total length of %s", lengths[0])
+
+    print(
+        "\n ################################ Here starts the recursive results#####################################################\n "
+    )
+    print(
+        "\n#######################################################################################################################\n"
+    )
+
+    recursive_chunker = RecursiveChunker(chunk_size=chunk_size, chunk_overlap=overlap_size)
+    r_chunks = recursive_chunker(clean_text)
+
+    r_total = 0
+    for chunk in r_chunks:
+        r_total = r_total + len(chunk)
+    average = r_total / len(r_chunks)
+    log.info("Average chunk size is %s", average)
+    log.info(
+        "First 200 chars of first recursive chunk is %s, its total length is %s",
+        r_chunks[0][:200],
+        len(r_chunks[0]),
+    )
+    log.info(
+        "First 200 chars of last recursive chunk is %s, its total length is %s",
+        r_chunks[-1][:200],
+        len(r_chunks[-1]),
+    )
+
+    log.info(
+        "Fifth recursive chunk is %s, its total length is %s",
+        r_chunks[4],
+        len(r_chunks[4]),
+    )
+
+    r_lengths = sorted([len(chunk) for chunk in r_chunks])
+
+    log.info("shortest recursive chunks has a total length of %s", r_lengths[0])
 
 
 if __name__ == "__main__":

@@ -25,6 +25,7 @@ dependencies = [
     "zenml[server]>=0.50.0",
     "sqlalchemy>=2.0.46",
     "psycopg2-binary>=2.9.11",
+    "langchain-text-splitters>=1.1.1",
 ]
 
 [project.optional-dependencies]

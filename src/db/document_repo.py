@@ -71,7 +71,7 @@ class DocumentRepository:
         log.info("Document %s status updated to %s successfully!", doc.id, status)
         return doc
 
-    def from_schema(self, schema: DocumentSchema) -> Document:
+    def from_document_schema(self, schema: DocumentSchema) -> Document:
 
         db_doc = Document(
             doc_name=schema.doc_name,
