@@ -13,11 +13,8 @@ class DocumentRepository:
     def __init__(self, session: Session):
         self._session = session
 
-    def add(self, doc: Document | DocumentSchema) -> Document:
+    def add(self, doc: Document) -> Document:
         """Adds a document to the database and returns the Document if succeeded and raises if fails"""
-        if doc is DocumentSchema:
-            doc = self._from_schema(doc)
-            log.info("Converting Document %s from schema!", doc.filename)
 
         try:
             self._session.add(doc)
@@ -74,7 +71,7 @@ class DocumentRepository:
         log.info("Document %s status updated to %s successfully!", doc.id, status)
         return doc
 
-    def _from_schema(self, schema: DocumentSchema) -> Document:
+    def from_schema(self, schema: DocumentSchema) -> Document:
 
         db_doc = Document(
             doc_name=schema.doc_name,

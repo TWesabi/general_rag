@@ -21,7 +21,7 @@ class ChunkSchema(BaseModel):
 
     content: str = Field(description="Chunk text content")
     position: int = Field(description="Index of chunk in document")
-    hints: str = Field(
+    hints: str | None = Field(
         default=None, description="Info that suppliments the chunck in generation phase"
     )
     has_table: bool = Field(default=False, description="if the chunk has table content")

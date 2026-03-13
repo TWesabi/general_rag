@@ -3,7 +3,7 @@ from pathlib import Path
 
 from docling.document_converter import DocumentConverter
 
-from src.schemas.document import DocumentMetadata, DocumentSchema
+from src.schemas.document import DocumentMetadata, DocumentSchema, DocumentStatus
 from src.utils.logger import setup_logger
 
 log = setup_logger(__name__)
@@ -23,7 +23,7 @@ class PdfParser(DocumentParser):
             convertor = DocumentConverter()
             result = convertor.convert(file_path)
         except RuntimeError as e:
-            log.error("Something wrong went when parsing the file %s:", file_path, e)
+            log.error("Failed to parse file %s: %s", file_path, e)
             raise
 
         doc_data = result.document
@@ -34,7 +34,7 @@ class PdfParser(DocumentParser):
 
         doc_metadata = DocumentMetadata(
             local_path=str(file_path),
-            status=result.status.title(),
+            status=DocumentStatus.PARSED,
             timestamp=result.timestamp,
             num_pages=num_pages,
             table_count=len(doc_data.tables),

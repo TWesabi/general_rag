@@ -23,7 +23,7 @@ def test_parse_document_file_not_found(parser):
 
 
 @pytest.mark.integration
-def test_parse_document_returns_expected_keys(parsed_result):
+def test_parse_document_returns_expected_fields(parsed_result):
     assert isinstance(parsed_result, DocumentSchema)
     assert isinstance(parsed_result.metadata, DocumentMetadata)
 
