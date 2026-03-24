@@ -51,7 +51,9 @@ class ChunkRepository:
 
     def get_all(self) -> list[Chunk]:
         """Returns all chuncks in the database grouped by document"""
-        ...
+        chunks = self._session.query(Chunk).all()
+        log.info("All elements of type Chunk fetched successfully")
+        return chunks
 
     def delete(self, id: int) -> None:
         """Deletes a given chunck by its ID and returns nothing if succeeded and raises if fails"""
