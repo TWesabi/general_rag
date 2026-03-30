@@ -5,3 +5,4 @@ log = setup_logger(__name__)
 
 if __name__ == "__main__":
     create_tables()
+    log.info("Tables created successfully.")

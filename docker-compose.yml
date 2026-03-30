@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: rag_postgres
+    restart: always
     environment:
       POSTGRES_DB: rag_db
       POSTGRES_USER: rag_user
@@ -11,5 +12,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag_qdrant
+    restart: always
+    ports:
+      - 6333:6333
+    expose:
+      - 6333
+    volumes:
+      - qdrant_data:/qdrant/storage
 volumes:
   postgres_data:
+  qdrant_data:

@@ -35,3 +35,27 @@ class QueryResponse(BaseModel):
     retrieved_chunks: List[RetrievedChunk] = Field(description="Retrieved chunks")
     answer: Optional[str] = Field(default=None, description="Generated answer")
     metadata: dict = Field(default_factory=dict, description="Response metadata")
+
+
+class QdrantFilterSchema(BaseModel):
+
+    musts: dict | None = Field(
+        default=None,
+        description="Contains the must conditions as key value pairs, and works like AND statemnet",
+    )
+    shoulds: dict | None = Field(
+        default=None,
+        description="Contains the should conditions as key value pairs and works like OR statemnet",
+    )
+    must_nots: dict | None = Field(
+        default=None,
+        description="Contains the non allowed conditions as key value pairs and works like OR statemnet",
+    )
+
+
+class RetrievalResult(BaseModel):
+    content: str
+    score: float
+    document_id: int
+    position: int
+    hints: str | None = None

@@ -1,73 +1,33 @@
-"""Retrieval system for RAG."""
+from abc import ABC, abstractmethod
 
-from typing import List, Optional
+from src.config import settings
+from src.schemas.query import QdrantFilterSchema, RetrievalResult
+from src.storage.vector_store import VectorStore
+from src.utils.logger import setup_logger
 
-from ..config import settings
-from ..embeddings import Embedder
-from ..schemas.query import RetrievedChunk
-from ..storage import WeaviateClient
+log = setup_logger(__name__)
 
 
-class Retriever:
-    """Retrieval system with vector search."""
+class BaseRetriever(ABC):
 
-    def __init__(
-        self,
-        storage_client: Optional[WeaviateClient] = None,
-        embedder: Optional[Embedder] = None,
-        top_k: Optional[int] = None,
-        score_threshold: Optional[float] = None,
-    ):
-        """
-        Initialize the retriever.
+    @abstractmethod
+    def __init__(self):
+        """Initializes the retriever with a Vector Store that performs the retirving"""
+        ...
 
-        Args:
-            storage_client: Weaviate client instance
-            embedder: Embedder instance
-            top_k: Number of results to retrieve
-            score_threshold: Minimum score threshold
-        """
-        self.storage = storage_client or WeaviateClient()
-        self.embedder = embedder or Embedder()
-        self.top_k = top_k or settings.retrieval.top_k
-        self.score_threshold = score_threshold or settings.retrieval.score_threshold
+    @abstractmethod
+    def __call__(self) -> list[RetrievalResult] | None:
+        """Performs the retrieval, takes a query, top-k, filters and gives a list of Retrieval result"""
+        ...
 
-    def retrieve(
-        self, query: str, top_k: Optional[int] = None, filters: Optional[dict] = None
-    ) -> List[RetrievedChunk]:
-        """
-        Retrieve relevant chunks for a query.
 
-        Args:
-            query: Query text
-            top_k: Number of results to return
-            filters: Additional filters
+class QdrantRetriever(BaseRetriever):
 
-        Returns:
-            List of retrieved chunks
-        """
-        # Generate query embedding
-        query_vector = self.embedder.embed_single(query)
+    def __init__(self, vector_store: VectorStore):
+        self.vector_store = vector_store
 
-        # Search in Weaviate
-        top_k = top_k or self.top_k
-        results = self.storage.search_chunks(
-            query_vector=query_vector,
-            top_k=top_k,
-            score_threshold=self.score_threshold,
-            filters=filters,
-        )
-
-        # Convert to RetrievedChunk objects
-        retrieved_chunks = []
-        for result in results:
-            chunk = RetrievedChunk(
-                chunk_id=result["chunk_id"],
-                content=result["content"],
-                score=result["score"],
-                metadata=result["metadata"],
-                document_id=result["metadata"].get("document_id"),
-            )
-            retrieved_chunks.append(chunk)
-
-        return retrieved_chunks
+    def __call__(
+        self, user_query: str, top_k: int = settings.TOP_K, filters: QdrantFilterSchema = None
+    ) -> list[RetrievalResult] | None:
+        result = self.vector_store.search(user_query=user_query, query_filter=filters)
+        return result

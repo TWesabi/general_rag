@@ -42,7 +42,7 @@ class OllamaEmbedder(BaseEmbedder):
             log.error("Cannot connect to Ollama at %s: %s", self.embeddings_url, e)
             raise
         except httpx.HTTPStatusError as e:
-            log.error("Ollama returned error status: %s", e)
+            log.error("Ollama returned error status: %s | body: %s", e, e.response.text)
             raise
 
         return embeddings_list
