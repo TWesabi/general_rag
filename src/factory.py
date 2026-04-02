@@ -7,10 +7,12 @@ from src.db.chunck_repo import ChunkRepository
 from src.db.document_repo import DocumentRepository
 from src.embeddings.embedding import BaseEmbedder, OllamaEmbedder
 from src.embeddings.transformer_embedding import TransformerEmbedder
+from src.generation.generator import OllamaGenerator
 from src.parsers.basic_cleaning import BasicTextCleaner
 from src.parsers.parser_pdf import PdfParser
 from src.pipelines.indexing import IndexingPipeline
 from src.pipelines.ingestion import IngestionPipeline
+from src.pipelines.rag import RAGPipeline
 from src.retrieval.retriever import BaseRetriever, QdrantRetriever
 from src.storage.vector_store import QdrantVectorStore, VectorStore
 
@@ -44,7 +46,7 @@ def create_vector_store() -> VectorStore:
 
 
 def create_retriever(vector_store: VectorStore = None) -> BaseRetriever:
-    store = vector_store or create_vector_store(embedding_provider=settings.EMBEDDING_PROVIDER)
+    store = vector_store or create_vector_store()
     return QdrantRetriever(vector_store=store)
 
 
@@ -69,3 +71,9 @@ def create_ingestion_pipeline(session: Session) -> IngestionPipeline:
         chunker=chunker,
     )
     return ingestion_pipeline
+
+
+def create_rag_pipeline() -> RAGPipeline:
+    retriever = create_retriever()
+    generator = OllamaGenerator()
+    return RAGPipeline(retriever=retriever, generator=generator)

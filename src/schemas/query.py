@@ -59,3 +59,7 @@ class RetrievalResult(BaseModel):
     document_id: int
     position: int
     hints: str | None = None
+
+
+class Chat(BaseModel):
+    pass

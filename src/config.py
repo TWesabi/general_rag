@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     CHUNKING__CHUNK_OVERLAP: int = 100
     OLLAMA__BASE_URL: str = "http://localhost:11434/v1"
     OLLAMA__EMBEDDING_MODEL: str = "bge-m3:latest"
+    OLLAMA__CHAT_MODEL: str = "qwen3:latest"
     TRANSFORMERS__EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
 
     QDRANT__COLLECTION_NAME: str = "rag_chunks"

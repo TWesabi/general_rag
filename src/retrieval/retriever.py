@@ -16,7 +16,9 @@ class BaseRetriever(ABC):
         ...
 
     @abstractmethod
-    def __call__(self) -> list[RetrievalResult] | None:
+    def __call__(
+        self, user_query: str, top_k: int = settings.TOP_K, filters: dict = None
+    ) -> list[RetrievalResult] | None:
         """Performs the retrieval, takes a query, top-k, filters and gives a list of Retrieval result"""
         ...
 
